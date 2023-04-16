@@ -1,0 +1,42 @@
+{
+    "name": "liyuze/php-data-bag",
+    "description": "Cache the execution results to prevent multiple executions.",
+    "keywords": [
+        "cache",
+        "data-bag",
+        "php-data-bag"
+    ],
+    "homepage": "https://github.com/liyuze/php-data-bag",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Yuze Li",
+            "email": "290315384@qq.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Liyuze\\PhpDataBag\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Liyuze\\PhpDataBag\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
