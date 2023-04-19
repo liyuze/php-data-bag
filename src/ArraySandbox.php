@@ -6,6 +6,9 @@ use Liyuze\PhpDataBag\Interface\ISandbox;
 
 class ArraySandbox implements ISandbox
 {
+    /**
+     * @var array<mixed>
+     */
     protected array $data = [];
 
     function set(string $key, mixed $value): void

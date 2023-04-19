@@ -23,19 +23,25 @@ class DataBag implements IDataBag
         $this->setinspector(new NullInspector());
     }
 
-    public function setSandbox(ISandbox $sandbox)
+    public function setSandbox(ISandbox $sandbox): self
     {
         $this->sandbox = $sandbox;
+
+        return $this;
     }
 
-    public function setInspector(?IInspector $inspector)
+    public function setInspector(?IInspector $inspector): self
     {
         $this->inspector = $inspector;
+
+        return $this;
     }
 
-    public function setIsGreedy($isGreedy)
+    public function setIsGreedy(bool $isGreedy): self
     {
         $this->isGreedy = $isGreedy;
+
+        return $this;
     }
 
     public function runInGreedyMode(callable|Closure $func): mixed
@@ -144,7 +150,11 @@ class DataBag implements IDataBag
         // filter IEscape value
         foreach ($arrays as $array) {
             $array = array_filter($array, function ($v) {
-                return ! ($v instanceof IEscape);
+                //@phpstan-ignore-next-line
+                if ($v instanceof IEscape) {
+                    return false;
+                }
+                return true;
             });
         }
 

@@ -7,9 +7,12 @@ use Liyuze\PhpDataBag\Interface\IInspector;
 
 class ClosureInspector implements IInspector
 {
-    public array|Closure $func;
+    /**
+     * @var callable
+     */
+    public $func;
 
-    public function __construct(callable|Closure $func)
+    public function __construct(callable $func)
     {
         $this->func = $func;
     }

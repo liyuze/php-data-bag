@@ -26,6 +26,11 @@ interface IDataBag
 
     public function existsItem(string $key, string $subKey): bool;
 
+    /**
+     * @param  string  $key
+     * @param  array<array<mixed, mixed>>  ...$arrays
+     * @return mixed[]
+     */
     public function mergeItems(string $key, array ...$arrays): array;
 
 }
