@@ -65,13 +65,18 @@ class DataBagTest extends TestCase
      */
     public function test_pickUpClosure_callClosure(DataBag $bag)
     {
-        self::assertEquals(
-            2,
-            $bag->pickUp('b', function () {
-                return 2;
-            })
-        );
+        $times = 0;
+        $closure = function () use (&$times) {
+            $times++;
 
+            return $times;
+        };
+
+        self::assertEquals(1, $bag->pickUp('b', $closure));
+        self::assertEquals(1, $bag->pickUp('b', $closure));
+        $bag->throw('b');
+        self::assertFalse($bag->exists('b'));
+        self::assertEquals(2, $bag->pickUp('b', $closure));
         self::assertEquals(2, $bag->take('b'));
     }
 
@@ -80,13 +85,19 @@ class DataBagTest extends TestCase
      */
     public function test_pickUpCallable_callCallable(DataBag $bag)
     {
-        $bag->pickUp('c', [$this, 'popNumber']);
-        self::assertEquals(3, $bag->take('c'));
+        self::assertEquals(0, $bag->pickUp('c', [$this, 'popNumber']));
+        self::assertEquals(0, $bag->pickUp('c', [$this, 'popNumber']));
+        $bag->throw('c');
+        self::assertFalse($bag->exists('c'));
+        self::assertEquals(1, $bag->pickUp('c', [$this, 'popNumber']));
+        self::assertEquals(1, $bag->take('c'));
     }
 
     public function popNumber()
     {
-        return 3;
+        static $num = 0;
+
+        return $num++;
     }
 
     /**
@@ -111,22 +122,6 @@ class DataBagTest extends TestCase
         self::assertNull($bag->take('a'));
         self::assertNull($bag->take('b'));
         self::assertNull($bag->take('no_exists_key'));
-    }
-
-    /**
-     * @depends clone test_instantiate
-     */
-    public function test_pickUpItems(DataBag $bag)
-    {
-        $bag->putItem('arr', 'a', 1);
-        $value = $bag->pickUpItems('arr', function () {
-            return ['b' => 2, 'c' => 3];
-        });
-
-        self::assertCount(3, $value);
-        self::assertEquals(6, array_sum($value));
-
-        self::assertEquals(3, $bag->takeItem('arr', 'c'));
     }
 
 
@@ -230,5 +225,42 @@ class DataBagTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $bag->put('data', 1);
         $bag->mergeItems('data', [1, 2, 3]);
+    }
+
+    /**
+     * @depends clone test_instantiate
+     */
+    public function test_isGreed_isTrue_alwaysRunCallable(DataBag $bag)
+    {
+        $times = 0;
+        $closure = function () use (&$times) {
+            return $times++;
+        };
+        $bag->setIsGreedy(true);
+        self::assertEquals(0, $bag->pickUp('c', $closure), 'first time');
+        self::assertEquals(1, $bag->pickUp('c', $closure), 'second time');
+        $bag->throw('c');
+        self::assertFalse($bag->exists('c'));
+        self::assertEquals(2, $bag->pickUp('c', $closure), 'third time');
+        self::assertEquals(2, $bag->take('c'));
+    }
+
+    /**
+     * @depends clone test_instantiate
+     */
+    public function test_runInGreedMode_alwaysRunCallable(DataBag $bag)
+    {
+        $times = 0;
+        $closure = function () use (&$times) {
+            return $times++;
+        };
+        $bag->runInGreedyMode(function() use ($bag, $closure) {
+            self::assertEquals(0, $bag->pickUp('c', $closure), 'first time');
+            self::assertEquals(1, $bag->pickUp('c', $closure), 'second time');
+            $bag->throw('c');
+            self::assertFalse($bag->exists('c'));
+            self::assertEquals(2, $bag->pickUp('c', $closure), 'third time');
+            self::assertEquals(2, $bag->take('c'));
+        });
     }
 }

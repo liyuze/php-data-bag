@@ -12,7 +12,10 @@ use Liyuze\PhpDataBag\Interface\ISandbox;
 class DataBag implements IDataBag
 {
     protected ISandbox $sandbox;
+
     protected ?IInspector $inspector;
+
+    protected bool $isGreedy = false;
 
     public function __construct()
     {
@@ -30,11 +33,35 @@ class DataBag implements IDataBag
         $this->inspector = $inspector;
     }
 
+    public function setIsGreedy($isGreedy)
+    {
+        $this->isGreedy = $isGreedy;
+    }
+
+    public function runInGreedyMode(callable|Closure $func): mixed
+    {
+        $oldStatus = $this->isGreedy;
+        $this->isGreedy = true;
+        $value = call_user_func($func);
+        $this->setIsGreedy($oldStatus);
+
+        return $value;
+    }
+
     public function pickUp(string $key, callable|Closure $value, ?IInspector $inspector = null): mixed
     {
-        return $this->commonPickUp($key, $value, $inspector, function ($key, $value) {
+        if ($this->exists($key) && ! $this->isGreedy) {
+            return $this->take($key);
+        }
+
+        $value = call_user_func($value);
+
+        $inspector === null || $inspector = $this->inspector;
+        if ($inspector === null || $inspector->isValid($value)) {
             $this->put($key, $value);
-        });
+        }
+
+        return $value;
     }
 
     public function throw(string $key): mixed
@@ -67,13 +94,6 @@ class DataBag implements IDataBag
     public function exists(string $key): bool
     {
         return $this->sandbox->exists($key);
-    }
-
-    public function pickUpItems(string $key, callable|Closure $value, ?IInspector $inspector = null): mixed
-    {
-        return $this->commonPickUp($key, $value, $inspector, function ($key, $value) {
-            return $this->mergeItems($key, $value);
-        });
     }
 
     public function putItem(string $key, string $subKey, mixed $value): void
@@ -130,21 +150,6 @@ class DataBag implements IDataBag
 
         $value = array_merge($value, ...$arrays);
         $this->sandbox->set($key, $value);
-
-        return $value;
-    }
-
-    protected function commonPickUp(string $key, callable|Closure $value, ?IInspector $inspector, Closure $diyHandle)
-    {
-        $value = call_user_func($value);
-
-        $inspector === null || $inspector = $this->inspector;
-        if ($inspector === null || $inspector->isValid($value)) {
-            $newValue = $diyHandle($key, $value);
-            if ($newValue !== null) {
-                $value = $newValue;
-            }
-        }
 
         return $value;
     }

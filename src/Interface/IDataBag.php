@@ -18,8 +18,6 @@ interface IDataBag
 
     public function clear(): void;
 
-    public function pickUpItems(string $key, callable|Closure $value, ?IInspector $inspector = null): mixed;
-
     public function putItem(string $key, string $subKey, mixed $value): void;
 
     public function takeItem(string $key, string $subKey): mixed;
@@ -28,6 +26,6 @@ interface IDataBag
 
     public function existsItem(string $key, string $subKey): bool;
 
-    public function mergeItems(string $key, array $value): array;
+    public function mergeItems(string $key, array ...$arrays): array;
 
 }
