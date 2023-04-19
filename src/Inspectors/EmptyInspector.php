@@ -6,8 +6,8 @@ use Liyuze\PhpDataBag\Interface\IInspector;
 
 class EmptyInspector implements IInspector
 {
-    function isValid(mixed $value): bool
+    public function isValid(mixed $value): bool
     {
-        return !! $value;
+        return ! ! $value;
     }
 }

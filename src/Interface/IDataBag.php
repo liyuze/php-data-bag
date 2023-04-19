@@ -32,5 +32,4 @@ interface IDataBag
      * @return mixed[]
      */
     public function mergeItems(string $key, array ...$arrays): array;
-
 }

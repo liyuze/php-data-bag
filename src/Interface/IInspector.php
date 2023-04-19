@@ -10,5 +10,5 @@ namespace Liyuze\PhpDataBag\Interface;
  */
 interface IInspector
 {
-    public function isValid(mixed $value):bool;
+    public function isValid(mixed $value): bool;
 }

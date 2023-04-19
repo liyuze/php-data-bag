@@ -154,6 +154,7 @@ class DataBag implements IDataBag
                 if ($v instanceof IEscape) {
                     return false;
                 }
+
                 return true;
             });
         }
