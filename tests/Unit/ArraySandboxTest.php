@@ -9,85 +9,59 @@ use ReflectionClass;
 
 class ArraySandboxTest extends TestCase
 {
-    public function testNewObj()
+    protected ISandbox $sandbox;
+
+    public function setUp(): void
     {
-        $sandbox = new ArraySandbox();
-
-        self::assertInstanceOf(ISandbox::class, $sandbox);
-        $data = $this->getSandboxValue($sandbox);
-        self::assertEmpty($data);
-
-        return $sandbox;
+        parent::setUp();
+        $this->sandbox = new ArraySandbox();
     }
 
-    /**
-     * @depends testNewObj
-     * @param  ArraySandbox  $sandbox
-     * @return ArraySandbox
-     */
-    function testSet(ArraySandbox $sandbox)
+    public function testNewObj()
     {
-        $sandbox->set('a', 1);
-        $data = $this->getSandboxValue($sandbox);
+        self::assertInstanceOf(ISandbox::class, $this->sandbox);
+        $data = $this->getSandboxValue($this->sandbox);
+        self::assertEmpty($data);
+
+        return $this->sandbox;
+    }
+
+    function testSet()
+    {
+        $this->sandbox->set('a', 1);
+        $data = $this->getSandboxValue($this->sandbox);
         self::assertCount(1, $data);
         self::assertTrue(key_exists('a', $data));
         self::assertEquals(1, $data['a']);
-
-        return $sandbox;
     }
 
-    /**
-     * @depends testSet
-     * @param  ArraySandbox  $sandbox
-     * @return ArraySandbox
-     */
-    function testGet(ArraySandbox $sandbox)
+    function testGet()
     {
-        $value = $sandbox->get('a');
-        self::assertEquals(1, $value);
-        self::assertNull($sandbox->get('not_exists_key'));
-
-        return $sandbox;
+        $this->sandbox->set('a', 1);
+        self::assertEquals(1, $this->sandbox->get('a'));
+        self::assertNull($this->sandbox->get('not_exists_key'));
     }
 
-    /**
-     * @depends testSet
-     * @param  ArraySandbox  $sandbox
-     * @return ArraySandbox
-     */
-    function testExists(ArraySandbox $sandbox)
+    function testExists()
     {
-        self::assertTrue($sandbox->exists('a'));
-        self::assertFalse($sandbox->exists('not_exists_key'));
-
-        return $sandbox;
+        $this->sandbox->set('a', 1);
+        self::assertTrue($this->sandbox->exists('a'));
+        self::assertFalse($this->sandbox->exists('not_exists_key'));
     }
 
-    /**
-     * @depends testSet
-     * @param  ArraySandbox  $sandbox
-     * @return ArraySandbox
-     */
-    function testDelete(ArraySandbox $sandbox)
+    function testDelete()
     {
-        $sandbox->delete('a');
-        self::assertNull($sandbox->get('a'));
-        $sandbox->delete('not_exists_key');
-
-        return $sandbox;
+        $this->sandbox->set('a', 1);
+        $this->sandbox->delete('a');
+        self::assertNull($this->sandbox->get('a'));
+        $this->sandbox->delete('not_exists_key');
     }
 
-
-    /**
-     * @depends testNewObj
-     * @param  ArraySandbox  $sandbox
-     * @return void
-     */
-    function testClear(ArraySandbox $sandbox)
+    function testClear()
     {
-        $sandbox->set('a', 1);
-        $sandbox->clear();
-        $data = $this->getSandboxValue($sandbox);
+        $this->sandbox->set('a', 1);
+        $this->sandbox->clear();
+        $data = $this->getSandboxValue($this->sandbox);
         self::assertEmpty($data);
     }
 
