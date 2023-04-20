@@ -3,6 +3,7 @@
 namespace Liyuze\PhpDataBag\Tests\Unit;
 
 use Liyuze\PhpDataBag\DataBag;
+use Liyuze\PhpDataBag\EscapeWrapper;
 use Liyuze\PhpDataBag\Interface\IDataBag;
 use Liyuze\PhpDataBag\Tests\TestCase;
 
@@ -32,13 +33,19 @@ class DataBagTest extends TestCase
         self::assertNull($this->bag->take('not_exists_key'));
     }
 
-    public function test_putValue_takeSameValue()
+    public function test_put_putValue_takeSameValue()
     {
         $this->bag->put('a', 1);
         self::assertEquals(1, $this->bag->take('a'));
         $obj = new \stdClass();
         $this->bag->put('obj', $obj);
         self::assertSame($obj, $this->bag->take('obj'));
+    }
+
+    public function test_put_escapeValue_doNothing()
+    {
+        $this->bag->put('a', new EscapeWrapper(1));
+        self::assertNull($this->bag->take('a'));
     }
 
     public function test_exists()
@@ -135,6 +142,12 @@ class DataBagTest extends TestCase
         self::assertEquals(3, array_sum($value));
     }
 
+    public function test_putItem_escapeValue_doNothing()
+    {
+        $this->bag->putItem('arr', 'a', new EscapeWrapper(1));
+        self::assertNull($this->bag->takeItem('arr', 'a'));
+    }
+
     public function test_throwItem()
     {
         $this->bag->putItem('arr', 'a', 1);
@@ -183,6 +196,15 @@ class DataBagTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->bag->put('data', 1);
         $this->bag->mergeItems('data', [1, 2, 3]);
+    }
+
+    public function test_mergeItems_filterEscapeValue()
+    {
+        $this->bag->mergeItems('arr', [1, new EscapeWrapper(2), 'c' => 3]);
+        self::assertCount(2, $this->bag->take('arr'));
+        self::assertEquals(1, $this->bag->takeItem('arr', 0));
+        self::assertNull($this->bag->takeItem('arr', 1));
+        self::assertEquals(3, $this->bag->takeItem('arr', 'c'));
     }
 
     public function test_isGreed_isTrue_alwaysRunCallable()

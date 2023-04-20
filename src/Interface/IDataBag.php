@@ -6,7 +6,7 @@ use Closure;
 
 interface IDataBag
 {
-    public function pickUp(string $key, callable|Closure $value, ?IInspector $inspector = null): mixed;
+    public function pickUp(string $key, callable $value, ?IInspector $inspector = null): mixed;
 
     public function put(string $key, mixed $value): void;
 

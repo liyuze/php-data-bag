@@ -148,7 +148,7 @@ class DataBag implements IDataBag
         }
 
         // filter IEscape value
-        foreach ($arrays as $array) {
+        foreach ($arrays as &$array) {
             $array = array_filter($array, function ($v) {
                 //@phpstan-ignore-next-line
                 if ($v instanceof IEscape) {
