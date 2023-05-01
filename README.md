@@ -1,11 +1,13 @@
 # php-data-bag
+
 Cache the execution results to prevent multiple executions.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/liyuze/php-data-bag.svg?style=flat-square)](https://packagist.org/packages/liyuze/php-data-bag)
 [![Total Downloads](https://img.shields.io/packagist/dt/liyuze/php-data-bag.svg?style=flat-square)](https://packagist.org/packages/liyuze/php-data-bag)
 ![GitHub Actions](https://github.com/liyuze/php-data-bag/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
+PSRs you support to avoid any confusion with users and contributors.
 
 ## Installation
 
@@ -18,7 +20,113 @@ composer require liyuze/php-data-bag
 ## Usage
 
 ```php
-// Usage description here
+$bag = new DataBag();
+
+$cacheKey = 'cache_key';
+$callable = function () {
+    //数据库查询、耗时运算
+    return 'result';
+}
+
+//运行 callable 并将执行结果放入背包
+$bag->pickUp('cache_key', $callable);   //result
+
+//获取背包中某 key 对应的值
+$bag->take($cacheKey);  //result
+
+//获取背包中某 key 对应的值，并删除掉改数据项
+$bag->throw($cacheKey);  //result
+
+//直接将结果放入到背包中
+$bag->put($cacheKey, 123);    //void
+$bag->put($cacheKey, 123);    //void
+
+//判断背包中是否存在某个 key
+$bag->exists($cacheKey); //true
+
+//清空背包
+$bag->clear(); //void
+```
+
+### 数组类型支持
+
+```php
+//设置单个元素
+public function putItem(string $key, string $subKey, mixed $value): void;
+//取出单个元素
+public function takeItem(string $key, string $subKey): mixed;
+//取出单个元素，并丢掉该元素
+public function throwItem(string $key, string $subKey): mixed;
+//判断是否存在某个子元素
+public function existsItem(string $key, string $subKey): bool;
+//合并一个或多个新的数组到旧元素上
+public function mergeItems(string $key, array ...$arrays): array;
+```
+
+### 检查器
+
+数据背包通过 `检查器` 来判断一个值是否为有效值，无效值将被丢弃，不被缓存。默认配置的 `NullInspector` 检查器，当值为 `null`
+时将不进行缓存。
+
+可用的检查器：
+
+- `NullInspector` null 检查器。
+- `EmptyInspector` empty 检查器。
+- `ClosureInspector` 自定义类型检查器。
+- `NothingnessInspector` 没有检查器（任何类型都是有效值）。
+
+设置检查器有两种方式：
+
+一、全局设置
+
+```php
+$bag = new DataBag();
+$bag->setInspector(new \Liyuze\PhpDataBag\Inspectors\EmptyInspector());
+```
+
+二、临时设置
+
+```php
+$bag->pickUp('cacheKey', fn ()=>0, new \Liyuze\PhpDataBag\Inspectors\\Liyuze\PhpDataBag\Inspectors\EmptyInspector());
+```
+
+### 可逃脱值
+
+`可逃脱值` 不能被缓存。
+
+```php
+$bag->pickUp('cacheKey', fn ()=> {
+    $result = 3;
+    if ($result < 0) {  //当计算结果小于0时将跳过缓存
+        return new \Liyuze\PhpDataBag\EscapeWrapper($result);
+    }
+    return $result;
+});
+```
+
+> 与检查器的区别
+> 
+> 检查器：适用于统一设置的缓存检查器，针对所有被缓存的值进行检查。<br/>
+> 可逃脱值：适用于特殊情况，进行针对当前要缓存的值有效。优先级比检查器高，可以覆盖检查器的缓存规则。
+
+### 贪婪模式
+
+在贪婪模式下，`pickUp` 和 `pickUpArr` 中的 `callable` 总是会执行，这在排查系统性能时很有用。
+
+开启方式有两种：
+
+一、全局开启
+
+```php
+$bag->setIsGreedy(true);
+```
+
+二、局部开启
+
+```php
+$bag->runInGreedyMode(function () {
+    //在贪婪模式开启中执行程序
+});
 ```
 
 ### Testing
@@ -41,8 +149,8 @@ If you discover any security related issues, please email 290315384@qq.com inste
 
 ## Credits
 
--   [Yuze Li](https://github.com/liyuze)
--   [All Contributors](../../contributors)
+- [Yuze Li](https://github.com/liyuze)
+- [All Contributors](../../contributors)
 
 ## License
 
@@ -50,4 +158,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 ## PHP Package Boilerplate
 
-This package was generated using the [PHP Package Boilerplate](https://laravelpackageboilerplate.com) by [Beyond Code](http://beyondco.de/).
+This package was generated using the [PHP Package Boilerplate](https://laravelpackageboilerplate.com)
+by [Beyond Code](http://beyondco.de/).
