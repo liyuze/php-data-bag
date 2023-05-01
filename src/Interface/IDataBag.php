@@ -2,8 +2,6 @@
 
 namespace Liyuze\PhpDataBag\Interface;
 
-use Closure;
-
 interface IDataBag
 {
     public function pickUp(string $key, callable $value, ?IInspector $inspector = null): mixed;

@@ -63,19 +63,20 @@ public function existsItem(string $key, string $subKey): bool;
 public function mergeItems(string $key, array ...$arrays): array;
 ```
 
-### 检查器
+### 拦截器
 
-数据背包通过 `检查器` 来判断一个值是否为有效值，无效值将被丢弃，不被缓存。默认配置的 `NullInspector` 检查器，当值为 `null`
+数据背包通过 `拦截器` 来判断一个值是否为有效值，无效值将被丢弃，不被缓存。默认配置的 `NullInspector` 拦截器，当值为 `null`
 时将不进行缓存。
 
-可用的检查器：
+可用的拦截器：
 
-- `NullInspector` null 检查器。
-- `EmptyInspector` empty 检查器。
-- `ClosureInspector` 自定义类型检查器。
-- `NothingnessInspector` 没有检查器（任何类型都是有效值）。
+- `NullInspector` `=== null` 拦截器。
+- `EmptyInspector` `empty()` 拦截器。
+- `InInspector` `in_array()` （强类型对比）拦截器。
+- `ClosureInspector` 自定义类型拦截器。
+- `NothingnessInspector` 无限制拦截器（任何类型都是有效值）。
 
-设置检查器有两种方式：
+设置拦截器有两种方式：
 
 一、全局设置
 
@@ -104,10 +105,10 @@ $bag->pickUp('cacheKey', fn ()=> {
 });
 ```
 
-> 与检查器的区别
+> 与拦截器的区别
 > 
-> 检查器：适用于统一设置的缓存检查器，针对所有被缓存的值进行检查。<br/>
-> 可逃脱值：适用于特殊情况，进行针对当前要缓存的值有效。优先级比检查器高，可以覆盖检查器的缓存规则。
+> 拦截器：适用于统一设置的缓存拦截器，针对所有被缓存的值进行检查。<br/>
+> 可逃脱值：适用于特殊情况，进行针对当前要缓存的值有效。优先级比拦截器高，可以覆盖拦截器的缓存规则。
 
 ### 贪婪模式
 

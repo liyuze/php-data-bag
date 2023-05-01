@@ -8,6 +8,6 @@ class EmptyInspector implements IInspector
 {
     public function isValid(mixed $value): bool
     {
-        return ! ! $value;
+        return ! empty($value);
     }
 }

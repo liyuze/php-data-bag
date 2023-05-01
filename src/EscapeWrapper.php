@@ -7,11 +7,11 @@ use Liyuze\PhpDataBag\Interface\IEscape;
 class EscapeWrapper implements IEscape
 {
     public function __construct(
-        protected $value
+        protected mixed $value
     ) {
     }
 
-    function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
