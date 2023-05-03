@@ -5,8 +5,9 @@ namespace Liyuze\PhpDataBag;
 use Closure;
 use Liyuze\PhpDataBag\Inspectors\NullInspector;
 use Liyuze\PhpDataBag\Interface\IDataBag;
-use Liyuze\PhpDataBag\Interface\IEscape;
+use Liyuze\PhpDataBag\Interface\IEscapeProxy;
 use Liyuze\PhpDataBag\Interface\IInspector;
+use Liyuze\PhpDataBag\Interface\IRefugeProxy;
 use Liyuze\PhpDataBag\Interface\ISandbox;
 
 class DataBag implements IDataBag
@@ -85,8 +86,10 @@ class DataBag implements IDataBag
 
     public function put(string $key, mixed $value): void
     {
-        if ($value instanceof IEscape) {
+        if ($value instanceof IEscapeProxy) {
             return;
+        } elseif ($value instanceof IRefugeProxy) {
+            $value = $value->getProxyValue();
         }
 
         $this->sandbox->set($key, $value);
@@ -104,8 +107,10 @@ class DataBag implements IDataBag
 
     public function putItem(string $key, string $subKey, mixed $value): void
     {
-        if ($value instanceof IEscape) {
+        if ($value instanceof IEscapeProxy) {
             return;
+        } elseif ($value instanceof IRefugeProxy) {
+            $value = $value->getProxyValue();
         }
 
         $arr = $this->sandbox->get($key) ?? [];
@@ -140,6 +145,11 @@ class DataBag implements IDataBag
         return key_exists($subKey, $arr);
     }
 
+    /**
+     * @param  string  $key
+     * @param  array<int|string, mixed>  ...$arrays
+     * @return array<int|string, mixed>
+     */
     public function mergeItems(string $key, array ...$arrays): array
     {
         $value = $this->sandbox->get($key) ?? [];
@@ -147,19 +157,22 @@ class DataBag implements IDataBag
             throw new \RuntimeException("The value of '{$key}' key is not an array type");
         }
 
-        // filter IEscape value
-        foreach ($arrays as &$array) {
-            $array = array_filter($array, function ($v) {
-                //@phpstan-ignore-next-line
-                if ($v instanceof IEscape) {
-                    return false;
+        $newArrays = [];
+        foreach ($arrays as $array) {
+            $newArray = [];
+            foreach ($array as $k => $v) {
+                if ($v instanceof IEscapeProxy) {
+                    continue;
                 }
-
-                return true;
-            });
+                if ($v instanceof IRefugeProxy) {
+                    $v = $v->getProxyValue();
+                }
+                $newArray[$k]= $v;
+            }
+            $newArrays[] = $newArray;
         }
 
-        $value = array_merge($value, ...$arrays);
+        $value = array_merge($value, ...$newArrays);
         $this->sandbox->set($key, $value);
 
         return $value;

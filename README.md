@@ -91,24 +91,41 @@ $bag->setInspector(new \Liyuze\PhpDataBag\Inspectors\EmptyInspector());
 $bag->pickUp('cacheKey', fn ()=>0, new \Liyuze\PhpDataBag\Inspectors\\Liyuze\PhpDataBag\Inspectors\EmptyInspector());
 ```
 
-### 可逃脱值
+### 逃脱值
 
 `可逃脱值` 不能被缓存。
 
 ```php
-$bag->pickUp('cacheKey', fn ()=> {
-    $result = 3;
-    if ($result < 0) {  //当计算结果小于0时将跳过缓存
-        return new \Liyuze\PhpDataBag\EscapeWrapper($result);
-    }
-    return $result;
+$bag->pickUp('cacheKey', fn () => {
+    return new \Liyuze\PhpDataBag\Proxies\EscapeProxyProxy(5);
 });
+$bag->exists('cacheKey'); //false
+
 ```
 
 > 与拦截器的区别
 > 
 > 拦截器：适用于统一设置的缓存拦截器，针对所有被缓存的值进行检查。<br/>
 > 可逃脱值：适用于特殊情况，进行针对当前要缓存的值有效。优先级比拦截器高，可以覆盖拦截器的缓存规则。
+
+### 避难值
+
+`避难值` 将跳过检查器的拦截，进行缓存。
+
+```php
+$bag->setInspector(new \Liyuze\PhpDataBag\Inspectors\EmptyInspector());
+$bag->pickUp('cacheKey', fn ()=> {
+    return new \Liyuze\PhpDataBag\Proxies\RefugeProxyProxy(0);
+});
+$bag->exists('cacheKey'); //true
+```
+
+> 与拦截器的区别
+>
+> 拦截器：适用于统一设置的缓存拦截器，针对所有被缓存的值进行检查。<br/>
+> 避难值：适用于特殊情况，进行针对当前要缓存的值有效。优先级比`拦截器`高，比`逃脱值`低。
+
+
 
 ### 贪婪模式
 
