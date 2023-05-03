@@ -79,6 +79,11 @@ class DataBag implements IDataBag
         return $value;
     }
 
+    public function getAll(): array
+    {
+        return $this->sandbox->getAll();
+    }
+
     public function clear(): void
     {
         $this->sandbox->clear();

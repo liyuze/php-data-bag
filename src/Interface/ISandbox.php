@@ -16,5 +16,10 @@ interface ISandbox
 
     public function exists(string $key): bool;
 
+    /**
+     * @return array<int|string, mixed>
+     */
+    public function getAll(): array;
+
     public function clear(): void;
 }

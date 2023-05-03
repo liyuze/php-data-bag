@@ -31,6 +31,11 @@ class ArraySandbox implements ISandbox
         return key_exists($key, $this->data);
     }
 
+    public function getAll(): array
+    {
+        return $this->data;
+    }
+
     public function clear(): void
     {
         $this->data = [];

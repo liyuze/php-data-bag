@@ -96,6 +96,13 @@ class DataBagTest extends TestCase
         self::assertNull($this->bag->throw('no_exists_key'));
     }
 
+    public function test_getAll()
+    {
+        $this->bag->put('a', 1);
+        $this->bag->put('b', 2);
+        $this->assertEquals(['a'=>1,'b'=>2], $this->bag->getAll());
+    }
+
     public function test_clear()
     {
         $this->bag->put('a', 1);
@@ -104,8 +111,8 @@ class DataBagTest extends TestCase
         self::assertNull($this->bag->take('a'));
         self::assertNull($this->bag->take('b'));
         self::assertNull($this->bag->take('no_exists_key'));
+        self::assertEmpty($this->bag->getAll());
     }
-
 
     public function test_takeItem_notExistsKey_returnNull()
     {

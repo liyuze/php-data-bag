@@ -14,6 +14,11 @@ interface IDataBag
 
     public function exists(string $key): bool;
 
+    /**
+     * @return array<int|string, mixed>
+     */
+    public function getAll(): array;
+
     public function clear(): void;
 
     public function putItem(string $key, string $subKey, mixed $value): void;
