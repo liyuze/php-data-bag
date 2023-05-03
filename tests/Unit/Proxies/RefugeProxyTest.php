@@ -6,7 +6,7 @@ use Liyuze\PhpDataBag\DataBag;
 use Liyuze\PhpDataBag\Inspectors\EmptyInspector;
 use Liyuze\PhpDataBag\Interface\IDataBag;
 use Liyuze\PhpDataBag\Tests\TestCase;
-use Liyuze\PhpDataBag\Proxies\RefugeProxyProxy;
+use Liyuze\PhpDataBag\Proxies\RefugeProxy;
 
 class RefugeProxyTest extends TestCase
 {
@@ -21,19 +21,19 @@ class RefugeProxyTest extends TestCase
 
     public function test_put_refugeValue_normalCache()
     {
-        $this->bag->put('a', new RefugeProxyProxy(0));
+        $this->bag->put('a', new RefugeProxy(0));
         self::assertEquals(0 , $this->bag->take('a'));
     }
 
     public function test_putItem_refugeValue_normalCache()
     {
-        $this->bag->putItem('arr', 'a', new RefugeProxyProxy(false));
+        $this->bag->putItem('arr', 'a', new RefugeProxy(false));
         self::assertFalse($this->bag->takeItem('arr', 'a'));
     }
 
     public function test_mergeItems_notFilterRefugeValue()
     {
-        $this->bag->mergeItems('arr', [1, new RefugeProxyProxy(0), 'c' => 3]);
+        $this->bag->mergeItems('arr', [1, new RefugeProxy(0), 'c' => 3]);
         self::assertCount(3, $this->bag->take('arr'));
         self::assertEquals(1, $this->bag->takeItem('arr', 0));
         self::assertEquals(0, $this->bag->takeItem('arr', 1));

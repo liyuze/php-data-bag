@@ -2,9 +2,9 @@
 
 namespace Liyuze\PhpDataBag\Proxies;
 
-use Liyuze\PhpDataBag\Interface\IEscapeProxy;
+use Liyuze\PhpDataBag\Interface\IRefuge;
 
-class EscapeProxyProxy implements IEscapeProxy
+class RefugeProxy implements IRefuge
 {
     public function __construct(
         protected mixed $value

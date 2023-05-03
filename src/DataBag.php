@@ -5,10 +5,11 @@ namespace Liyuze\PhpDataBag;
 use Closure;
 use Liyuze\PhpDataBag\Inspectors\NullInspector;
 use Liyuze\PhpDataBag\Interface\IDataBag;
-use Liyuze\PhpDataBag\Interface\IEscapeProxy;
+use Liyuze\PhpDataBag\Interface\IEscape;
 use Liyuze\PhpDataBag\Interface\IInspector;
-use Liyuze\PhpDataBag\Interface\IRefugeProxy;
+use Liyuze\PhpDataBag\Interface\IRefuge;
 use Liyuze\PhpDataBag\Interface\ISandbox;
+use RuntimeException;
 
 class DataBag implements IDataBag
 {
@@ -91,9 +92,9 @@ class DataBag implements IDataBag
 
     public function put(string $key, mixed $value): void
     {
-        if ($value instanceof IEscapeProxy) {
+        if ($value instanceof IEscape) {
             return;
-        } elseif ($value instanceof IRefugeProxy) {
+        } elseif ($value instanceof IRefuge) {
             $value = $value->getProxyValue();
         }
 
@@ -129,9 +130,9 @@ class DataBag implements IDataBag
 
     public function putItem(string $key, string $subKey, mixed $value): void
     {
-        if ($value instanceof IEscapeProxy) {
+        if ($value instanceof IEscape) {
             return;
-        } elseif ($value instanceof IRefugeProxy) {
+        } elseif ($value instanceof IRefuge) {
             $value = $value->getProxyValue();
         }
 
@@ -198,17 +199,17 @@ class DataBag implements IDataBag
     {
         $value = $this->sandbox->get($key) ?? [];
         if (! is_array($value)) {
-            throw new \RuntimeException("The value of '{$key}' key is not an array type");
+            throw new RuntimeException("The value of '$key' key is not an array type");
         }
 
         $newArrays = [];
         foreach ($arrays as $array) {
             $newArray = [];
             foreach ($array as $k => $v) {
-                if ($v instanceof IEscapeProxy) {
+                if ($v instanceof IEscape) {
                     continue;
                 }
-                if ($v instanceof IRefugeProxy) {
+                if ($v instanceof IRefuge) {
                     $v = $v->getProxyValue();
                 }
                 $newArray[$k] = $v;

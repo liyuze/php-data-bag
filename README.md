@@ -105,7 +105,7 @@ $bag->pickUp('cacheKey', fn ()=>0, new \Liyuze\PhpDataBag\Inspectors\\Liyuze\Php
 
 ```php
 $bag->pickUp('cacheKey', fn () => {
-    return new \Liyuze\PhpDataBag\Proxies\EscapeProxyProxy(5);
+    return new \Liyuze\PhpDataBag\Proxies\EscapeProxy(5);
 });
 $bag->exists('cacheKey'); //false
 
@@ -123,7 +123,7 @@ $bag->exists('cacheKey'); //false
 ```php
 $bag->setInspector(new \Liyuze\PhpDataBag\Inspectors\EmptyInspector());
 $bag->pickUp('cacheKey', fn ()=> {
-    return new \Liyuze\PhpDataBag\Proxies\RefugeProxyProxy(0);
+    return new \Liyuze\PhpDataBag\Proxies\RefugeProxy(0);
 });
 $bag->exists('cacheKey'); //true
 ```

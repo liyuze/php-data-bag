@@ -7,7 +7,7 @@ use Liyuze\PhpDataBag\Interface\ISandbox;
 class ArraySandbox implements ISandbox
 {
     /**
-     * @var array<mixed>
+     * @var mixed[]
      */
     protected array $data = [];
 

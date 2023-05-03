@@ -2,7 +2,7 @@
 
 namespace Liyuze\PhpDataBag\Interface;
 
-interface IRefugeProxy
+interface IRefuge
 {
     public function getProxyValue(): mixed;
 }
