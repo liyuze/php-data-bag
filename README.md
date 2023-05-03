@@ -43,6 +43,8 @@ $bag->put($cacheKey, 123);    //void
 
 //判断背包中是否存在某个 key
 $bag->exists($cacheKey); //true
+$bag->exists('k1', 'k2'); //指定的 keys 都存在时返回 true
+$bag->existsAny('k1', 'k2'); //指定的 keys 任何一个存在时返回 true
 
 //清空背包
 $bag->clear(); //void

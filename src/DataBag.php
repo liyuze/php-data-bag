@@ -105,9 +105,34 @@ class DataBag implements IDataBag
         return $this->sandbox->get($key);
     }
 
-    public function exists(string $key): bool
+    public function exists(string|array $keys): bool
     {
-        return $this->sandbox->exists($key);
+        if (! is_array($keys)) {
+            $keys = func_get_args();
+        }
+
+        foreach ($keys as $key) {
+            if (! $this->sandbox->exists($key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function existsAny(string|array $keys): bool
+    {
+        if (! is_array($keys)) {
+            $keys = func_get_args();
+        }
+
+        foreach ($keys as $key) {
+            if ($this->sandbox->exists($key)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function putItem(string $key, string $subKey, mixed $value): void
@@ -172,7 +197,7 @@ class DataBag implements IDataBag
                 if ($v instanceof IRefugeProxy) {
                     $v = $v->getProxyValue();
                 }
-                $newArray[$k]= $v;
+                $newArray[$k] = $v;
             }
             $newArrays[] = $newArray;
         }

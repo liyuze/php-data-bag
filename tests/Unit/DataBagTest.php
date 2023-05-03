@@ -48,6 +48,44 @@ class DataBagTest extends TestCase
         self::assertFalse($this->bag->exists('not_exists_key'));
     }
 
+
+    function test_exists_bothExists_returnTrue()
+    {
+        $this->bag->put('a', 1);
+        $this->bag->put('b', 1);
+        self::assertTrue($this->bag->exists('a', 'b'));
+    }
+
+    function test_exists_notBothExists_returnFalse()
+    {
+        $this->bag->put('a', 1);
+        self::assertFalse($this->bag->exists('a', 'b'));
+    }
+
+    function test_exists_noOneExists_returnFalse()
+    {
+        self::assertFalse($this->bag->exists('not_exists_key'));
+    }
+
+    function test_existsAny_bothExists_returnTrue()
+    {
+        $this->bag->put('a', 1);
+        $this->bag->put('b', 1);
+        self::assertTrue($this->bag->existsAny('a', 'b'));
+    }
+
+    function test_existsAny_notBothExists_returnTrue()
+    {
+        $this->bag->put('a', 1);
+        self::assertTrue($this->bag->existsAny('a', 'b'));
+    }
+
+    function test_existsAny_noOneExists_returnFalse()
+    {
+        self::assertFalse($this->bag->existsAny('not_exists_key'));
+    }
+
+
     public function test_putNullValue_existsReturnTrue()
     {
         $this->bag->put('a', null);
@@ -100,7 +138,7 @@ class DataBagTest extends TestCase
     {
         $this->bag->put('a', 1);
         $this->bag->put('b', 2);
-        $this->assertEquals(['a'=>1,'b'=>2], $this->bag->getAll());
+        $this->assertEquals(['a' => 1, 'b' => 2], $this->bag->getAll());
     }
 
     public function test_clear()

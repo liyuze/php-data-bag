@@ -12,7 +12,17 @@ interface IDataBag
 
     public function throw(string $key): mixed;
 
-    public function exists(string $key): bool;
+    /**
+     * @param  string|array<int|string>  $keys
+     * @return bool
+     */
+    public function exists(string|array $keys): bool;
+
+    /**
+     * @param  string|array<int|string>  $keys
+     * @return bool
+     */
+    public function existsAny(string|array $keys): bool;
 
     /**
      * @return array<int|string, mixed>
