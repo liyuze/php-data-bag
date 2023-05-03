@@ -39,7 +39,6 @@ $bag->throw($cacheKey);  //result
 
 //直接将结果放入到背包中
 $bag->put($cacheKey, 123);    //void
-$bag->put($cacheKey, 123);    //void
 
 //判断背包中是否存在某个 key
 $bag->exists($cacheKey); //true
@@ -55,12 +54,19 @@ $bag->clear(); //void
 ```php
 //设置单个元素
 public function putItem(string $key, string $subKey, mixed $value): void;
+
 //取出单个元素
 public function takeItem(string $key, string $subKey): mixed;
+
 //取出单个元素，并丢掉该元素
 public function throwItem(string $key, string $subKey): mixed;
-//判断是否存在某个子元素
-public function existsItem(string $key, string $subKey): bool;
+
+//判断指定的一些子元素是否都存在
+public function existsItem(string $key, string ...$subKeys): bool;
+
+//判断指定的一些子元素是否至少存在一个
+public function existsAnyItem(string $key, string ...$subKeys): bool;
+
 //合并一个或多个新的数组到旧元素上
 public function mergeItems(string $key, array ...$arrays): array;
 ```

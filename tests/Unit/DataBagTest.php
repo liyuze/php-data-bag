@@ -48,7 +48,6 @@ class DataBagTest extends TestCase
         self::assertFalse($this->bag->exists('not_exists_key'));
     }
 
-
     function test_exists_bothExists_returnTrue()
     {
         $this->bag->put('a', 1);
@@ -84,7 +83,6 @@ class DataBagTest extends TestCase
     {
         self::assertFalse($this->bag->existsAny('not_exists_key'));
     }
-
 
     public function test_putNullValue_existsReturnTrue()
     {
@@ -189,12 +187,42 @@ class DataBagTest extends TestCase
         self::assertNull($this->bag->throwItem('no_exists_key', 'no_exists_key'));
     }
 
-    public function test_existsItem()
+    function test_existsItem_bothExists_returnTrue()
     {
         $this->bag->putItem('arr', 'a', 1);
-        self::assertTrue($this->bag->existsItem('arr', 'a'));
+        $this->bag->putItem('arr', 'b', 1);
+        self::assertTrue($this->bag->existsItem('arr', 'a', 'b'));
+    }
+
+    function test_existsItem_notBothExists_returnFalse()
+    {
+        $this->bag->putItem('arr', 'a', 1);
+        self::assertFalse($this->bag->existsItem('arr', 'a', 'b'));
+    }
+
+    function test_existsItem_noOneExists_returnFalse()
+    {
         self::assertFalse($this->bag->existsItem('arr', 'not_exists_key'));
         self::assertFalse($this->bag->existsItem('not_exists_key', 'not_exists_key'));
+    }
+
+    function test_existsAnyItem_bothExists_returnTrue()
+    {
+        $this->bag->putItem('arr', 'a', 1);
+        $this->bag->putItem('arr', 'b', 1);
+        self::assertTrue($this->bag->existsAnyItem('arr', 'a', 'b'));
+    }
+
+    function test_existsAnyItem_notBothExists_returnTrue()
+    {
+        $this->bag->putItem('arr', 'a', 1);
+        self::assertTrue($this->bag->existsAnyItem('arr', 'a', 'b'));
+    }
+
+    function test_existsAnyItem_noOneExists_returnFalse()
+    {
+        self::assertFalse($this->bag->existsAnyItem('arr', 'not_exists_key'));
+        self::assertFalse($this->bag->existsAnyItem('not_exists_key', 'not_exists_key'));
     }
 
     public function test_mergeItems()

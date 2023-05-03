@@ -105,12 +105,8 @@ class DataBag implements IDataBag
         return $this->sandbox->get($key);
     }
 
-    public function exists(string|array $keys): bool
+    public function exists(string ...$keys): bool
     {
-        if (! is_array($keys)) {
-            $keys = func_get_args();
-        }
-
         foreach ($keys as $key) {
             if (! $this->sandbox->exists($key)) {
                 return false;
@@ -120,12 +116,8 @@ class DataBag implements IDataBag
         return true;
     }
 
-    public function existsAny(string|array $keys): bool
+    public function existsAny(string ...$keys): bool
     {
-        if (! is_array($keys)) {
-            $keys = func_get_args();
-        }
-
         foreach ($keys as $key) {
             if ($this->sandbox->exists($key)) {
                 return true;
@@ -165,14 +157,36 @@ class DataBag implements IDataBag
         return $value;
     }
 
-    public function existsItem(string $key, string $subKey): bool
+    public function existsItem(string $key, string ...$subKeys): bool
     {
         $arr = $this->sandbox->get($key) ?? [];
         if (! is_array($arr)) {
             return false;
         }
 
-        return key_exists($subKey, $arr);
+        foreach ($subKeys as $subKey) {
+            if (! key_exists($subKey, $arr)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function existsAnyItem(string $key, string ...$subKeys): bool
+    {
+        $arr = $this->sandbox->get($key) ?? [];
+        if (! is_array($arr)) {
+            return false;
+        }
+
+        foreach ($subKeys as $subKey) {
+            if (key_exists($subKey, $arr)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
