@@ -1,23 +1,22 @@
 # php-data-bag
 
-Cache the execution results to prevent multiple executions.
+在单次请求中缓存执行结果以防止高耗时程序多次执行。
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/liyuze/php-data-bag.svg?style=flat-square)](https://packagist.org/packages/liyuze/php-data-bag)
 [![Total Downloads](https://img.shields.io/packagist/dt/liyuze/php-data-bag.svg?style=flat-square)](https://packagist.org/packages/liyuze/php-data-bag)
 ![GitHub Actions](https://github.com/liyuze/php-data-bag/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+主要适用于数据库查询、文件操作等高耗时方法的场景。
 
-## Installation
+## 安装
 
-You can install the package via composer:
+通过 composer 安装此包:
 
 ```bash
 composer require liyuze/php-data-bag
 ```
 
-## Usage
+## 用法
 
 ```php
 $bag = new DataBag();
