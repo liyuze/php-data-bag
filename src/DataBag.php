@@ -2,13 +2,12 @@
 
 namespace Liyuze\PhpDataBag;
 
-use Closure;
 use Liyuze\PhpDataBag\Inspectors\NullInspector;
-use Liyuze\PhpDataBag\Interface\IDataBag;
-use Liyuze\PhpDataBag\Interface\IEscape;
-use Liyuze\PhpDataBag\Interface\IInspector;
-use Liyuze\PhpDataBag\Interface\IRefuge;
-use Liyuze\PhpDataBag\Interface\ISandbox;
+use Liyuze\PhpDataBag\Interfaces\IDataBag;
+use Liyuze\PhpDataBag\Interfaces\IEscape;
+use Liyuze\PhpDataBag\Interfaces\IInspector;
+use Liyuze\PhpDataBag\Interfaces\IRefuge;
+use Liyuze\PhpDataBag\Interfaces\ISandbox;
 use RuntimeException;
 
 class DataBag implements IDataBag
@@ -25,28 +24,21 @@ class DataBag implements IDataBag
         $this->setinspector(new NullInspector());
     }
 
-    public function setSandbox(ISandbox $sandbox): self
+    public function setSandbox(ISandbox $sandbox):self
     {
         $this->sandbox = $sandbox;
 
         return $this;
     }
 
-    public function setInspector(?IInspector $inspector): self
+    public function setInspector(?IInspector $inspector):self
     {
         $this->inspector = $inspector;
 
         return $this;
     }
 
-    public function setIsGreedy(bool $isGreedy): self
-    {
-        $this->isGreedy = $isGreedy;
-
-        return $this;
-    }
-
-    public function runInGreedyMode(callable|Closure $func): mixed
+    public function runInGreedyMode(callable $func)
     {
         $oldStatus = $this->isGreedy;
         $this->isGreedy = true;
@@ -56,7 +48,14 @@ class DataBag implements IDataBag
         return $value;
     }
 
-    public function pickUp(string $key, callable|Closure $value, ?IInspector $inspector = null): mixed
+    public function setIsGreedy(bool $isGreedy):self
+    {
+        $this->isGreedy = $isGreedy;
+
+        return $this;
+    }
+
+    public function pickUp(string $key, callable $value, ?IInspector $inspector = null)
     {
         if ($this->exists($key) && ! $this->isGreedy) {
             return $this->take($key);
@@ -72,41 +71,7 @@ class DataBag implements IDataBag
         return $value;
     }
 
-    public function throw(string $key): mixed
-    {
-        $value = $this->sandbox->get($key);
-        $this->sandbox->delete($key);
-
-        return $value;
-    }
-
-    public function getAll(): array
-    {
-        return $this->sandbox->getAll();
-    }
-
-    public function clear(): void
-    {
-        $this->sandbox->clear();
-    }
-
-    public function put(string $key, mixed $value): void
-    {
-        if ($value instanceof IEscape) {
-            return;
-        } elseif ($value instanceof IRefuge) {
-            $value = $value->getProxyValue();
-        }
-
-        $this->sandbox->set($key, $value);
-    }
-
-    public function take(string $key): mixed
-    {
-        return $this->sandbox->get($key);
-    }
-
-    public function exists(string ...$keys): bool
+    public function exists(string ...$keys):bool
     {
         foreach ($keys as $key) {
             if (! $this->sandbox->exists($key)) {
@@ -117,7 +82,41 @@ class DataBag implements IDataBag
         return true;
     }
 
-    public function existsAny(string ...$keys): bool
+    public function take(string $key)
+    {
+        return $this->sandbox->get($key);
+    }
+
+    public function put(string $key, $value):void
+    {
+        if ($value instanceof IEscape) {
+            return;
+        } elseif ($value instanceof IRefuge) {
+            $value = $value->getProxyValue();
+        }
+
+        $this->sandbox->set($key, $value);
+    }
+
+    public function throw(string $key)
+    {
+        $value = $this->sandbox->get($key);
+        $this->sandbox->delete($key);
+
+        return $value;
+    }
+
+    public function getAll():array
+    {
+        return $this->sandbox->getAll();
+    }
+
+    public function clear():void
+    {
+        $this->sandbox->clear();
+    }
+
+    public function existsAny(string ...$keys):bool
     {
         foreach ($keys as $key) {
             if ($this->sandbox->exists($key)) {
@@ -128,7 +127,7 @@ class DataBag implements IDataBag
         return false;
     }
 
-    public function putItem(string $key, string $subKey, mixed $value): void
+    public function putItem(string $key, string $subKey, $value):void
     {
         if ($value instanceof IEscape) {
             return;
@@ -141,14 +140,14 @@ class DataBag implements IDataBag
         $this->sandbox->set($key, $arr);
     }
 
-    public function takeItem(string $key, string $subKey): mixed
+    public function takeItem(string $key, string $subKey)
     {
         $value = $this->sandbox->get($key) ?? [];
 
         return $value[$subKey] ?? null;
     }
 
-    public function throwItem(string $key, string $subKey): mixed
+    public function throwItem(string $key, string $subKey)
     {
         $arr = $this->sandbox->get($key) ?? [];
         $value = $arr[$subKey] ?? null;
@@ -158,7 +157,7 @@ class DataBag implements IDataBag
         return $value;
     }
 
-    public function existsItem(string $key, string ...$subKeys): bool
+    public function existsItem(string $key, string ...$subKeys):bool
     {
         $arr = $this->sandbox->get($key) ?? [];
         if (! is_array($arr)) {
@@ -174,7 +173,7 @@ class DataBag implements IDataBag
         return true;
     }
 
-    public function existsAnyItem(string $key, string ...$subKeys): bool
+    public function existsAnyItem(string $key, string ...$subKeys):bool
     {
         $arr = $this->sandbox->get($key) ?? [];
         if (! is_array($arr)) {
@@ -191,11 +190,11 @@ class DataBag implements IDataBag
     }
 
     /**
-     * @param  string  $key
-     * @param  array<int|string, mixed>  ...$arrays
-     * @return array<int|string, mixed>
+     * @param string $key
+     * @param array<int|string, > ...$arrays
+     * @return array<int|string, >
      */
-    public function mergeItems(string $key, array ...$arrays): array
+    public function mergeItems(string $key, array ...$arrays):array
     {
         $value = $this->sandbox->get($key) ?? [];
         if (! is_array($value)) {

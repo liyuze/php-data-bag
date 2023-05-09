@@ -2,12 +2,20 @@
 
 namespace Liyuze\PhpDataBag\Proxies;
 
-use Liyuze\PhpDataBag\Interface\IEscape;
+use Liyuze\PhpDataBag\Interfaces\IEscape;
 
 class EscapeProxy implements IEscape
 {
-    public function __construct(
-        protected mixed $value
-    ) {
+    /**
+     * @var mixed
+     */
+    protected $value;
+
+    /**
+     * @param mixed $value
+     */
+    public function __construct($value)
+    {
+        $this->value = $value;
     }
 }

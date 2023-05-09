@@ -3,7 +3,7 @@
 namespace Liyuze\PhpDataBag\Tests\Unit;
 
 use Liyuze\PhpDataBag\DataBag;
-use Liyuze\PhpDataBag\Interface\IDataBag;
+use Liyuze\PhpDataBag\Interfaces\IDataBag;
 use Liyuze\PhpDataBag\Tests\TestCase;
 
 class DataBagTest extends TestCase

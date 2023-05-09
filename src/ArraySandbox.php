@@ -2,7 +2,7 @@
 
 namespace Liyuze\PhpDataBag;
 
-use Liyuze\PhpDataBag\Interface\ISandbox;
+use Liyuze\PhpDataBag\Interfaces\ISandbox;
 
 class ArraySandbox implements ISandbox
 {
@@ -11,32 +11,32 @@ class ArraySandbox implements ISandbox
      */
     protected array $data = [];
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, $value):void
     {
         $this->data[$key] = $value;
     }
 
-    public function get(string $key): mixed
+    public function get(string $key)
     {
         return $this->data[$key] ?? null;
     }
 
-    public function delete(string $key): void
+    public function delete(string $key):void
     {
         unset($this->data[$key]);
     }
 
-    public function exists(string $key): bool
+    public function exists(string $key):bool
     {
         return key_exists($key, $this->data);
     }
 
-    public function getAll(): array
+    public function getAll():array
     {
         return $this->data;
     }
 
-    public function clear(): void
+    public function clear():void
     {
         $this->data = [];
     }

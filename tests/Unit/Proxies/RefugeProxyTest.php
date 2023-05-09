@@ -4,9 +4,9 @@ namespace Liyuze\PhpDataBag\Tests\Unit\Proxies;
 
 use Liyuze\PhpDataBag\DataBag;
 use Liyuze\PhpDataBag\Inspectors\EmptyInspector;
-use Liyuze\PhpDataBag\Interface\IDataBag;
-use Liyuze\PhpDataBag\Tests\TestCase;
+use Liyuze\PhpDataBag\Interfaces\IDataBag;
 use Liyuze\PhpDataBag\Proxies\RefugeProxy;
+use Liyuze\PhpDataBag\Tests\TestCase;
 
 class RefugeProxyTest extends TestCase
 {

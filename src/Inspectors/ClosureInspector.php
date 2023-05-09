@@ -2,7 +2,7 @@
 
 namespace Liyuze\PhpDataBag\Inspectors;
 
-use Liyuze\PhpDataBag\Interface\IInspector;
+use Liyuze\PhpDataBag\Interfaces\IInspector;
 
 class ClosureInspector implements IInspector
 {
@@ -16,7 +16,11 @@ class ClosureInspector implements IInspector
         $this->func = $func;
     }
 
-    public function isValid(mixed $value): bool
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    public function isValid($value):bool
     {
         return (bool) call_user_func($this->func, $value);
     }

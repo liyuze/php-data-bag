@@ -3,7 +3,7 @@
 namespace Liyuze\PhpDataBag\Tests\Unit;
 
 use Liyuze\PhpDataBag\ArraySandbox;
-use Liyuze\PhpDataBag\Interface\ISandbox;
+use Liyuze\PhpDataBag\Interfaces\ISandbox;
 use Liyuze\PhpDataBag\Tests\TestCase;
 use ReflectionClass;
 

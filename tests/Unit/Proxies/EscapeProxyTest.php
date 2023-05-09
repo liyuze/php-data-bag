@@ -3,9 +3,9 @@
 namespace Liyuze\PhpDataBag\Tests\Unit\Proxies;
 
 use Liyuze\PhpDataBag\DataBag;
-use Liyuze\PhpDataBag\Interface\IDataBag;
-use Liyuze\PhpDataBag\Tests\TestCase;
+use Liyuze\PhpDataBag\Interfaces\IDataBag;
 use Liyuze\PhpDataBag\Proxies\EscapeProxy;
+use Liyuze\PhpDataBag\Tests\TestCase;
 
 class EscapeProxyTest extends TestCase
 {

@@ -2,19 +2,28 @@
 
 namespace Liyuze\PhpDataBag\Inspectors;
 
-use Liyuze\PhpDataBag\Interface\IInspector;
+use Liyuze\PhpDataBag\Interfaces\IInspector;
 
 class InInspector implements IInspector
 {
     /**
-     * @param  mixed[]  $values
+     * @var array<mixed>
      */
-    public function __construct(
-        protected array $values,
-    ) {
+    protected array $values = [];
+
+    /**
+     * @param array<mixed> $values
+     */
+    public function __construct($values)
+    {
+        $this->values = $values;
     }
 
-    public function isValid(mixed $value): bool
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    public function isValid($value):bool
     {
         return ! in_array($value, $this->values, true);
     }

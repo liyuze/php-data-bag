@@ -2,11 +2,15 @@
 
 namespace Liyuze\PhpDataBag\Inspectors;
 
-use Liyuze\PhpDataBag\Interface\IInspector;
+use Liyuze\PhpDataBag\Interfaces\IInspector;
 
 class NullInspector implements IInspector
 {
-    public function isValid(mixed $value): bool
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    public function isValid($value):bool
     {
         return $value !== null;
     }
